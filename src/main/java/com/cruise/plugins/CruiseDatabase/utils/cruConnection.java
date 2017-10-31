@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import com.corecruise.cruise.SessionObject;
 import com.corecruise.cruise.logging.Clog;
+import com.corecruise.cruise.services.utils.Parameters;
 import com.corecruise.cruise.services.utils.Services;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -15,35 +16,37 @@ public class cruConnection {
     }
     public static boolean createConnectionPool(SessionObject so, Services service) {
     	boolean ret = false;
-    	String poolName = service.getParameter("PoolName").getValue();
-    	if(null == poolName || poolName.trim().length()<1) {
-    		Clog.Error(so, "service", "80001", "PoolName is required and was not supplied.");
 
-    	}else {
-    		if(null == cruConnections) {
-    			cruConnections = new HashMap<String,HikariDataSource>();
-    		}
-    		poolName = poolName.trim().toUpperCase();
-    		try {
-    			HikariConfig jdbcConfig = new HikariConfig();
-    			jdbcConfig.setPoolName(poolName);
-    			jdbcConfig.setDriverClassName(service.getParameter("DriverClassName").getValue());
-    			jdbcConfig.setMaximumPoolSize(service.getParameter("maximumPoolSize").getIntValue());
-    			jdbcConfig.setMinimumIdle(service.getParameter("minimumIdle").getIntValue());
-    			jdbcConfig.setJdbcUrl(service.getParameter("jdbcUrl").getValue());
-    			jdbcConfig.setUsername(service.getParameter("username").getValue());
-    			jdbcConfig.setPassword(service.getParameter("password").getValue());
-    			HikariDataSource ds = new HikariDataSource(jdbcConfig);
-    			if(cruConnections.containsKey(poolName)) {
-    				Clog.Warn(so, "service", "80002", "Duplicat pool "+poolName+". Ignoring.");
-    			}else {
-    				cruConnections.put(poolName, ds);
-    				ret = true;
-    			}
-    		}catch(Exception e) {
-                Clog.Error(so, "service", "80003", "Error creating connection:"+e.getMessage());
-    		}
-    	}
+	    	String poolName = service.ParameterValue("PoolName");
+	    	if(null == poolName || poolName.trim().length()<1) {
+	    		Clog.Error(so, "service", "80001", "PoolName is required and was not supplied.");
+	
+	    	}else {
+	    		if(null == cruConnections) {
+	    			cruConnections = new HashMap<String,HikariDataSource>();
+	    		}
+	    		poolName = poolName.trim().toUpperCase();
+	    		try {
+	    			HikariConfig jdbcConfig = new HikariConfig();
+	    			jdbcConfig.setPoolName(poolName);
+	    			jdbcConfig.setDriverClassName(service.ParameterValue("DriverClassName"));
+	    			jdbcConfig.setMaximumPoolSize(service.ParameterInt("maximumPoolSize"));
+	    			jdbcConfig.setMinimumIdle(service.ParameterInt("minimumIdle"));
+	    			jdbcConfig.setJdbcUrl(service.ParameterValue("jdbcUrl"));
+	    			jdbcConfig.setUsername(service.ParameterValue("username"));
+	    			jdbcConfig.setPassword(service.ParameterValue("password"));
+	    			HikariDataSource ds = new HikariDataSource(jdbcConfig);
+	    			if(cruConnections.containsKey(poolName)) {
+	    				Clog.Warn(so, "service", "80002", "Duplicat pool "+poolName+". Ignoring.");
+	    			}else {
+	    				cruConnections.put(poolName, ds);
+	    				ret = true;
+	    			}
+	    		}catch(Exception e) {
+	                Clog.Error(so, "service", "80003", "Error creating connection:"+e.getMessage());
+	    		}
+	    	}
+
     	return ret;
     }
     public static cruConnectionObject getConnection(SessionObject so, Services service) throws Exception {
