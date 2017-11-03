@@ -19,29 +19,16 @@ public class cruConnectionObject {
     public cruConnectionObject() {
 
     }
-    public Connection getConnection(SessionObject so, String poolName, HashMap<String,HikariDataSource> cruConnections) throws SQLException, Exception {
-    	conn = null;
-    	if(null == poolName || poolName.trim().length()<1) {
-    		Clog.Error(so, "service", "80010", "(getConnection) PoolName is required and was not supplied.");
-    	}else {
-    		poolName = poolName.trim().toUpperCase();
-    		try {
-	    		if(cruConnections.containsKey(poolName)) {
-	    			HikariDataSource ds = cruConnections.get(poolName);
-		    		try {
-		    			conn =  ds.getConnection();
-		    		} catch (SQLException ex) {
-		    			Clog.Error(so, "ser", "80020", "(getConnection) failed:"+ex.getMessage());
-		    			throw ex;
-		    		} 
-	    		}
-    		}catch(Exception e) {
-    			Clog.Error(so, "ser", "80020", "(getConnection) failed:"+e.getMessage());
-    			throw e;
-    		}
-    	}
-    	return conn;
-    }
+
+    public Connection getConn() {
+		return conn;
+	}
+
+	public void setConn(Connection conn) {
+		this.conn = conn;
+	}
+
+
     public boolean Close() {
     	boolean ret = false;
     	if(null != ps) {
