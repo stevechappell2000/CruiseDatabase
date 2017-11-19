@@ -1,12 +1,6 @@
 package com.cruise.plugins.CruiseDatabase.metadata;
 
 import java.util.HashMap;
-import java.util.Map;
-
-import com.corecruise.cruise.services.utils.CollectionBean;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 

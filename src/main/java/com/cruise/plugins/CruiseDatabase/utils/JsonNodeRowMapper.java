@@ -13,16 +13,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonNodeRowMapper  {
 
-    public static boolean mapRows(SessionObject so, ResultSet rs) throws SQLException {
-    	boolean ret = false;
-    	ResultSetMetaData rsmd = rs.getMetaData();
-    	int columnCount = rsmd.getColumnCount();
-    	ArrayNode retMap = mapRows(so,rs,rsmd,columnCount);
-    	if(null != retMap) {
-    		ret = true;
-    		so.appendToResponse(retMap);
+    public static ArrayNode mapRows(SessionObject so, ResultSet rs) throws SQLException {
+    	ArrayNode retMap = null;
+    	try {
+	    	ResultSetMetaData rsmd = rs.getMetaData();
+	    	int columnCount = rsmd.getColumnCount();
+	    	retMap = mapRows(so,rs,rsmd,columnCount);
+    	}catch(SQLException e) {
+    		throw e;
     	}
-    	return ret;
+    	return retMap;
     }
     private static ArrayNode mapRows(SessionObject so, ResultSet rs, ResultSetMetaData rsmd, int columnCount ) throws SQLException {
     	ObjectNode objectNode = null;//so.getCruiseMapper().createObjectNode();

@@ -7,7 +7,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 //@JsonFormat(shape=JsonFormat.Shape.ARRAY)
 public class TableMetaData {

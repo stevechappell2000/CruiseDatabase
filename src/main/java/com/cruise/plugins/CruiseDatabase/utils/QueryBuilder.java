@@ -116,7 +116,7 @@ public class QueryBuilder {
 									fieldValue = "1";
 								}
 							}
-							boolean otherPKey = false;
+							//boolean otherPKey = false;
 							
 							if(PKeys.containsKey(strF)){
 								fieldValue = PKeys.get(strF)+"."+strF;
@@ -234,23 +234,28 @@ public class QueryBuilder {
 			StringBuffer fields = new StringBuffer();
 			StringBuffer tables = new StringBuffer();
 			StringBuffer where 	= new StringBuffer();
-			StringBuffer OrderBy = new StringBuffer();
+			//StringBuffer OrderBy = new StringBuffer();
 			String[] froms = null;
 			HashMap<String, String> keys 		= new HashMap<String, String>();
 			ArrayList<QueryFieldValue> qfv = new ArrayList<QueryFieldValue>();
 
-			String qOrder = service.Parameter("orderby");
-			String qGroupBy = service.Parameter("groupby");
-			boolean bDistinct = new Boolean(service.Parameter("distinct"));
-			String qFields = service.Parameter("columnlist");
-			String sFields = service.Parameter("selectlist");
-			String qFrom = service.Parameter("fromlist");
+			String qOrder = service.Parameter("OrderBy");
+			String qGroupBy = service.Parameter("GroupBy");
+			boolean bDistinct = new Boolean(service.Parameter("Distinct"));
+			String qFields = service.Parameter("ColumnList");
+			String sFields = service.Parameter("SelectList");
+			String qFrom = service.Parameter("FromList");
 			String qWhere = service.Parameter("Where");
 
 			if(null != qFrom && qFrom.contains(",")) {
 				froms = qFrom.split(",");
 			}else {
-				froms = new String[] {qFrom};
+				if(null != service.Parameter("TableName")) {
+					froms = new String[] {service.Parameter("TableName")};
+				}else {
+					froms = new String[] {"duel"};
+				}
+				
 			}
 			String timeStampFunctionName = "TIMESTAMP";
 			int i = 0;
@@ -389,7 +394,7 @@ public class QueryBuilder {
 								fv = "is NULL";
 							if(fv.contains("||") && fv.contains("%")){
 								StringTokenizer st = new StringTokenizer(fv.replaceAll("'",""),"||");
-								int cnt = st.countTokens();
+								//int cnt = st.countTokens();
 								
 								ArrayList<String> inList = new ArrayList<String>();
 								ArrayList<String> partList = new ArrayList<String>();
@@ -667,7 +672,7 @@ public class QueryBuilder {
 			String xTable = "";
 			String qFields = service.Parameter("columnlist");
 			String qFrom = service.Parameter("fromlist");
-
+			boolean pk = false;
 			if(null != qFrom && qFrom.contains(",")) {
 				froms = qFrom.split(",");
 			}else {
@@ -679,7 +684,7 @@ public class QueryBuilder {
 				ArrayList<String> getM = null;
 				TableMetaData metric = cruConnection.getPoolMetaData(so, service).getTables().get(froms[i]);
 				
-				boolean pk = false;
+				pk = false;
 				HashMap<String, ColumnMetaData> TableFields = null;
 
 				if(vendorName.contains("oracle")){
@@ -749,7 +754,7 @@ public class QueryBuilder {
 					String fv = qfv.get(f).getFieldValue();
 					String fn = qfv.get(f).getFieldName();
 					String ty = qfv.get(f).getFieldType();
-					String fvFinished = valueCleanup(fn,fv,ty);
+					//String fvFinished = valueCleanup(fn,fv,ty);
 					if(!qfv.get(f).isExcludeFromWhere()){
 						if(fields.toString().length()>0)
 							fields.append(",");
@@ -918,7 +923,7 @@ public class QueryBuilder {
 					String fv = qfv.get(f).getFieldValue();
 					String fn = qfv.get(f).getFieldName();
 					String ty = qfv.get(f).getFieldType();
-					String fvFinished = valueCleanup(fn,fv,ty);
+					//String fvFinished = valueCleanup(fn,fv,ty);
 					if(!qfv.get(f).isExcludeFromWhere()){
 						if(fields.toString().length()>0)
 							fields.append(",");
@@ -962,12 +967,7 @@ public class QueryBuilder {
 					throw e;
 				}
 			}*/
-		}catch(IllegalAccessException err){
-			throw err;
-		}catch(IllegalArgumentException err){
-			throw err;
-		}catch(InvocationTargetException err){
-			throw err;
+
 		}catch(Exception err){
 			throw err;
 		}

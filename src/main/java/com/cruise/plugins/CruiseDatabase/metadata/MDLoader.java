@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.corecruise.cruise.SessionObject;
-import com.corecruise.cruise.services.utils.CollectionBean;
+import com.corecruise.cruise.logging.Clog;
 import com.corecruise.cruise.services.utils.Services;
 
 public class MDLoader {
@@ -30,8 +30,7 @@ public class MDLoader {
 				ret = true;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Clog.Error(so,"service","900001","Plugin:"+so.getActiveService().Service()+" Action:"+so.getActiveService().Action()+e.getMessage());
 			throw e;
 		}finally {
 			if(null != rs) {
@@ -41,11 +40,11 @@ public class MDLoader {
 		return ret;
     }
     private static void loadColumnData(DatabaseMetaData mData, SessionObject so, Services service, DBMetaData dmd, TableMetaData tmd) {
-		int i = 0;
+		//int i = 0;
 		ResultSet rs = null;
 		try {
 			rs = mData.getColumns(dmd.getCatalog(), dmd.getSchema(), tmd.getTableName(), "%");
-			HashMap<String, ColumnMetaData> tcm = tmd.getColumns();
+			//HashMap<String, ColumnMetaData> tcm = tmd.getColumns();
 			while(rs.next()) {
 				ColumnMetaData cb = new ColumnMetaData();
 				cb.getColumnMetaData().put("TYPE_NAME",rs.getString("TYPE_NAME"));
@@ -60,8 +59,8 @@ public class MDLoader {
 
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Clog.Error(so,"service","900002","Plugin:"+so.getActiveService().Service()+" Action:"+so.getActiveService().Action()+e.getMessage());
+
 			
 		}finally {
 			if(null != rs) {
@@ -99,7 +98,8 @@ public class MDLoader {
 				}
 			}
 	    }catch(Exception e){
-	    	e.printStackTrace();
+	    	//e.printStackTrace();
+	    	Clog.Warn(so,"service","900003","Plugin:"+so.getActiveService().Service()+" Action:"+so.getActiveService().Action()+e.getMessage());
 		}finally{
 			if(null != res)
 				try {
@@ -137,7 +137,7 @@ public class MDLoader {
 			}
 
 	    }catch(Exception e){
-	    	e.printStackTrace();
+	    	Clog.Warn(so,"service","900004","Plugin:"+so.getActiveService().Service()+" Action:"+so.getActiveService().Action()+e.getMessage());
 		}finally{
 			if(null != res)
 				try {
@@ -171,7 +171,7 @@ public class MDLoader {
 			}
 
 		}catch(Exception e){
-			e.printStackTrace();
+			Clog.Warn(so,"service","900005","Plugin:"+so.getActiveService().Service()+" Action:"+so.getActiveService().Action()+e.getMessage());
 		}finally{
 			if(null != res)
 				try {

@@ -5,11 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 
-import com.corecruise.cruise.SessionObject;
-import com.corecruise.cruise.logging.Clog;
-import com.zaxxer.hikari.HikariDataSource;
 
 public class cruConnectionObject {
 	private Connection conn = null;

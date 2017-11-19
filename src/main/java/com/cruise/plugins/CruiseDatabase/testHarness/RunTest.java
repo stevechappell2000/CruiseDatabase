@@ -1,16 +1,10 @@
 package com.cruise.plugins.CruiseDatabase.testHarness;
-
+import com.corecruise.cruise.testharness.ValidateUser;
 import com.corecruise.cruise.SessionObject;
-import com.corecruise.cruise.SessionObjectWebJSON;
-import com.corecruise.cruise.SessionObjectWebParams;
+import com.corecruise.cruise.SessionObjectJSON;
 import com.corecruise.cruise.services.interfaces.CruiseInterface;
 import com.corecruise.cruise.services.interfaces.PluginInterface;
-import com.corecruise.cruise.services.utils.Application;
-import com.corecruise.cruise.services.utils.CollectionBean;
-import com.cruise.plugins.Action;
-import com.cruise.plugins.ActionParameter;
-import com.cruise.plugins.PlugInMetaData;
-import com.fasterxml.jackson.databind.JsonNode;
+
 
 public class RunTest implements CruiseInterface {
 	public RunTest() {
@@ -96,7 +90,7 @@ public class RunTest implements CruiseInterface {
 						"		}";
 		
 		
-		SessionObjectWebJSON sowp1 = new SessionObjectWebJSON();
+		SessionObjectJSON sowp1 = new SessionObjectJSON();
 		sowp1.go(this, vu , sample ,true);
 		try {
 			System.out.println(sowp1.getResponseJSONPP());
