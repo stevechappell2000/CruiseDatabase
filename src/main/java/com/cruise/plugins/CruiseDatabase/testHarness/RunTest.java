@@ -28,7 +28,7 @@ public class RunTest implements CruiseInterface {
 						"		        \"username\" : \"admin\""+
 						"		      }"+
 						"		    },"+
-						"		    \"services\" : {"+
+						"		    \"services\" : ["+
 						/*"		      \"SampleService\" : {"+
 						"		        \"parameters\" : {"+
 						"		          \"pluginName\" : \"CruiseDatabase\","+
@@ -36,12 +36,11 @@ public class RunTest implements CruiseInterface {
 						"		          \"action\" : \"info\""+
 						"		        }"+
 						"		      },"+*/
-						"		      \"DatabaseConnection\" : {"+
-						"		        \"parameters\" : {"+
+						"		        {\"parameters\" : {"+
 						"		          \"pluginName\" : \"CruiseDatabase\","+
 						"		          \"service\" : \"AddConnection\","+
 						"		          \"action\" : \"cDBCreatePool\","+
-						"		          \"PoolName\" : \"MyPool\","+
+						"		          \"poolName\" : \"MyPool\","+
 						"		          \"DriverClassName\" : \"org.mariadb.jdbc.Driver\","+
 						"		          \"maximumPoolSize\" : \"25\","+
 						"		          \"minimumIdle\" : \"5\","+
@@ -51,33 +50,31 @@ public class RunTest implements CruiseInterface {
 						"		          \"password\" : \"admin\""+
 						"		        }"+
 						"		      },"+
-						
-						"		      \"TableUpdate\" : {"+
-						"		        \"parameters\" : {"+
+						"		      {\"parameters\" : {"+
 						"		          \"pluginName\" : \"CruiseDatabase\","+
 						"		          \"service\" : \"UpdateRecord\","+
 						"		          \"action\" : \"update\","+
-						"		          \"PoolName\" : \"MyPool\","+
-						"		          \"fromlist\" : \"cru_components\","+
+						"		          \"poolName\" : \"MyPool\","+
 						"		          \"COMPONENTINDEX\" : \"0000\","+
 						"		          \"COMPONENTNAME\" : \"Thank you disillusionment\","+
-						"		          \"TableName\" : \"cru_components\""+
+						"		          \"tableName\" : \"cru_components\""+
 						"		        }"+
 						"		      },"+
-						
-						"		      \"TableSelect\" : {"+
-						"		        \"parameters\" : {"+
+						"		      {\"parameters\" : {"+
 						"		          \"pluginName\" : \"CruiseDatabase\","+
 						"		          \"service\" : \"selectAll\","+
 						"		          \"action\" : \"select\","+
-						"		          \"PoolName\" : \"MyPool\","+
-						"		          \"fromlist\" : \"cru_components\","+
-						"		          \"TableName\" : \"cru_components\""+
+						"		          \"poolName\" : \"MyPool\","+
+						"		          \"tableName\" : \"cru_components\""+
+						"		        }"+
+						"		      },"+
+						"		      {\"parameters\" : {"+
+						"		          \"pluginName\" : \"CruiseDatabase\","+
+						"		          \"action\" : \"echo\""+
 						"		        }"+
 						"		      }"+
 						/*","+
-						"		      \"DatabaseInformation\" : {"+
-						"		        \"parameters\" : {"+
+						"		      { \"parameters\" : {"+
 						"		          \"pluginName\" : \"CruiseDatabase\","+
 						"		          \"service\" : \"Pool Information\","+
 						"		          \"action\" : \"cDBGetPoolInfo\","+
@@ -85,7 +82,7 @@ public class RunTest implements CruiseInterface {
 						"		        }"+
 						"		      }"+*/
 
-						"		    }"+
+						"		    ]"+
 						"		  }"+
 						"		}";
 		

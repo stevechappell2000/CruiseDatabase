@@ -34,6 +34,9 @@ public class QueryBuilder {
 	public static String createUpdate(SessionObject so, Services service) throws SQLException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception{
 		try{
 			DBMetaData dbmd = cruConnection.getPoolMetaData(so, service);
+			if(null == dbmd) {
+				return null;
+			}
 			String vendorName = dbmd.getVendor();
 			String SchemaName = dbmd.getSchema();
 			StringBuffer sbQ 	= new StringBuffer();
@@ -45,8 +48,8 @@ public class QueryBuilder {
 			HashMap<String,String> Keys 	= new HashMap<String,String>();
 			ArrayList<QueryFieldValue> qfv = new ArrayList<QueryFieldValue>();
 			String xTable = "";
-			String qFields = service.Parameter("columnlist");
-			String qFrom = service.Parameter("fromlist");
+			String qFields = service.Parameter("columnList");
+			String qFrom = service.Parameter("tableName");
 
 			if(null != qFrom && qFrom.contains(",")) {
 				froms = qFrom.split(",");
@@ -57,7 +60,7 @@ public class QueryBuilder {
 			int i = 0;
 			for(i = 0;i<froms.length;i++){
 				ArrayList<String> getM = null;
-				TableMetaData metric = cruConnection.getPoolMetaData(so, service).getTables().get(froms[i]);
+				TableMetaData metric = dbmd.getTables().get(froms[i]);
 				
 				boolean pk = false;
 				HashMap<String, ColumnMetaData> TableFields = null;
@@ -227,6 +230,9 @@ public class QueryBuilder {
 	public static String createSelect(SessionObject so, Services service, boolean bAll) throws SQLException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception{
 		try{
 			DBMetaData dbmd = cruConnection.getPoolMetaData(so, service);
+			if(null == dbmd) {
+				return null;
+			}
 			String vendorName = dbmd.getVendor();
 			String SchemaName = dbmd.getSchema();
 			StringBuffer sbQ 	= new StringBuffer();
@@ -239,19 +245,19 @@ public class QueryBuilder {
 			HashMap<String, String> keys 		= new HashMap<String, String>();
 			ArrayList<QueryFieldValue> qfv = new ArrayList<QueryFieldValue>();
 
-			String qOrder = service.Parameter("OrderBy");
-			String qGroupBy = service.Parameter("GroupBy");
-			boolean bDistinct = new Boolean(service.Parameter("Distinct"));
-			String qFields = service.Parameter("ColumnList");
-			String sFields = service.Parameter("SelectList");
-			String qFrom = service.Parameter("FromList");
-			String qWhere = service.Parameter("Where");
+			String qOrder = service.Parameter("orderBy");
+			String qGroupBy = service.Parameter("groupBy");
+			boolean bDistinct = new Boolean(service.Parameter("distinct"));
+			String qFields = service.Parameter("columnList");
+			String sFields = service.Parameter("selectList");
+			String qFrom = service.Parameter("tableName");
+			String qWhere = service.Parameter("where");
 
 			if(null != qFrom && qFrom.contains(",")) {
 				froms = qFrom.split(",");
 			}else {
-				if(null != service.Parameter("TableName")) {
-					froms = new String[] {service.Parameter("TableName")};
+				if(null != service.Parameter("tableName")) {
+					froms = new String[] {service.Parameter("tableName")};
 				}else {
 					froms = new String[] {"duel"};
 				}
@@ -261,7 +267,7 @@ public class QueryBuilder {
 			int i = 0;
 			for(i = 0;i<froms.length;i++){
 				ArrayList<String> getM = null;
-				TableMetaData metric = cruConnection.getPoolMetaData(so, service).getTables().get(froms[i]);
+				TableMetaData metric = dbmd.getTables().get(froms[i]);
 				
 				String xTable = "";
 				boolean pk = false;
@@ -661,6 +667,9 @@ public class QueryBuilder {
 		//}
 		try{
 			DBMetaData dbmd = cruConnection.getPoolMetaData(so, service);
+			if(null == dbmd) {
+				return null;
+			}
 			String vendorName = dbmd.getVendor();
 			String SchemaName = dbmd.getSchema();
 			StringBuffer sbQ 	= new StringBuffer();
@@ -670,8 +679,8 @@ public class QueryBuilder {
 			HashMap<String, String> keys 		= new HashMap<String, String>();
 			ArrayList<QueryFieldValue> qfv = new ArrayList<QueryFieldValue>();
 			String xTable = "";
-			String qFields = service.Parameter("columnlist");
-			String qFrom = service.Parameter("fromlist");
+			String qFields = service.Parameter("columnList");
+			String qFrom = service.Parameter("tableName");
 			boolean pk = false;
 			if(null != qFrom && qFrom.contains(",")) {
 				froms = qFrom.split(",");
@@ -682,7 +691,7 @@ public class QueryBuilder {
 			int i = 0;
 			for(i = 0;i<froms.length;i++){
 				ArrayList<String> getM = null;
-				TableMetaData metric = cruConnection.getPoolMetaData(so, service).getTables().get(froms[i]);
+				TableMetaData metric = dbmd.getTables().get(froms[i]);
 				
 				pk = false;
 				HashMap<String, ColumnMetaData> TableFields = null;
@@ -829,6 +838,9 @@ public class QueryBuilder {
 		//}
 		try{
 			DBMetaData dbmd = cruConnection.getPoolMetaData(so, service);
+			if(null == dbmd) {
+				return null;
+			}
 			String vendorName = dbmd.getVendor();
 			String SchemaName = dbmd.getSchema();
 			StringBuffer sbQ 	= new StringBuffer();
@@ -838,8 +850,8 @@ public class QueryBuilder {
 			HashMap<String, String> keys 		= new HashMap<String, String>();
 			ArrayList<QueryFieldValue> qfv = new ArrayList<QueryFieldValue>();
 			String xTable = "";
-			String qFields = service.Parameter("columnlist");
-			String qFrom = service.Parameter("fromlist");
+			String qFields = service.Parameter("columnList");
+			String qFrom = service.Parameter("tableName");
 
 			if(null != qFrom && qFrom.contains(",")) {
 				froms = qFrom.split(",");
@@ -850,7 +862,7 @@ public class QueryBuilder {
 			int i = 0;
 			for(i = 0;i<froms.length;i++){
 				ArrayList<String> getM = null;
-				TableMetaData metric = cruConnection.getPoolMetaData(so, service).getTables().get(froms[i]);
+				TableMetaData metric = dbmd.getTables().get(froms[i]);
 				
 				boolean pk = false;
 				HashMap<String, ColumnMetaData> TableFields = null;

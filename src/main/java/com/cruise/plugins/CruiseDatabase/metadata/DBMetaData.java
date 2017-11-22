@@ -76,7 +76,7 @@ public class DBMetaData {
 			Properties p = new Properties();
 			p.put("Columns", ""+f.getValue().getAllColumns());
 			p.put("Type",f.getValue().getTableType());
-			p.put("TableName",f.getValue().getTableName());
+			p.put("tableName",f.getValue().getTableName());
             out.add(p);
 		}
 		return out;

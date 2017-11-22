@@ -29,7 +29,7 @@ public class cruConnection {
 	 */
 	public static boolean removeConnectionPool(SessionObject so, Services service) {
 		boolean ret = false;
-		String poolName = service.ParameterValue("PoolName");
+		String poolName = service.ParameterValue("poolName");
 		if(null == poolName || poolName.trim().length()<1) {
 			Clog.Error(so, "service", "80001", "PoolName is required and was not supplied.");
 
@@ -47,7 +47,7 @@ public class cruConnection {
 	}
 	public static boolean isPoolLoaded(SessionObject so, Services service) {
 		boolean ret = false;
-		String poolName = service.ParameterValue("PoolName");
+		String poolName = service.ParameterValue("poolName");
 		if(null == poolName || poolName.trim().length()<1) {
 			Clog.Error(so, "service", "80001", "PoolName is required and was not supplied.");
 
@@ -64,9 +64,9 @@ public class cruConnection {
 	}
 	public static DBMetaData getPoolMetaData(SessionObject so, Services service) {
 		DBMetaData ret = null;
-		String poolName = service.ParameterValue("PoolName");
+		String poolName = service.ParameterValue("poolName");
 		if(null == poolName || poolName.trim().length()<1) {
-			Clog.Error(so, "service", "80001", "PoolName is required and was not supplied.");
+			Clog.Error(so, "service", "80001", "poolName is required and was not supplied.");
 
 		}else {
 			if(null == cache) {
@@ -76,6 +76,8 @@ public class cruConnection {
 
 				if(cache.containsKey(poolName)) {
 					ret = cache.get(poolName);
+				}else {
+					Clog.Warn(so, "app", "80002", "No poolname found matching:"+poolName);
 				}
 
 			}
@@ -100,7 +102,7 @@ public class cruConnection {
 		jdbcConfig.setUsername(service.ParameterValue("username"));
 		jdbcConfig.setPassword(service.ParameterValue("password"));*/
 
-		String poolName = service.ParameterValue("PoolName");
+		String poolName = service.ParameterValue("poolName");
 		if(null == poolName || poolName.trim().length()<1) {
 			Clog.Error(so, "service", "80001", "PoolName is required and was not supplied.");
 
@@ -112,7 +114,7 @@ public class cruConnection {
 			Properties p = new Properties();
 			for (Entry<String, String> entry : service.getParameters().entrySet()) {
 				//Shouldn't hurt anything, but removing service and action just in case.
-				if(entry.getKey().equalsIgnoreCase("service")||entry.getKey().equalsIgnoreCase("action")||entry.getKey().equalsIgnoreCase("pluginName")) {
+				if(entry.getKey().equalsIgnoreCase("service")||entry.getKey().equalsIgnoreCase("ID")||entry.getKey().equalsIgnoreCase("action")||entry.getKey().equalsIgnoreCase("pluginName")) {
 
 				}else {
 					p.setProperty(entry.getKey(), entry.getValue());
@@ -147,7 +149,7 @@ public class cruConnection {
 	}
 	public static cruConnectionObject getNewConnection(SessionObject so, Services service) throws Exception {
 		cruConnectionObject ret = new cruConnectionObject();
-		String poolName = service.Parameter("PoolName");
+		String poolName = service.Parameter("poolName");
 		if(null == poolName || poolName.trim().length()<1) {
 			Clog.Error(so, "service", "80010", "(getConnection) PoolName is required and was not supplied.");
 		}else {
@@ -192,7 +194,7 @@ public class cruConnection {
 		Connection co = null;
 		try {
 			co = ds.getConnection();
-			String poolName = service.ParameterValue("PoolName");
+			String poolName = service.ParameterValue("poolName");
 			if(null != poolName) {
 				poolName = poolName.trim().toUpperCase();
 				DatabaseMetaData md = co.getMetaData();
