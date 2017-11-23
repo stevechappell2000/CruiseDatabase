@@ -4,6 +4,7 @@ import com.corecruise.cruise.SessionObject;
 import com.corecruise.cruise.SessionObjectJSON;
 import com.corecruise.cruise.services.interfaces.CruiseInterface;
 import com.corecruise.cruise.services.interfaces.PluginInterface;
+import com.corecruise.cruise.services.utils.Services;
 
 
 public class RunTest implements CruiseInterface {
@@ -100,12 +101,12 @@ public class RunTest implements CruiseInterface {
 		
 	}
 	@Override
-	public boolean PreProcess(SessionObject cruise, PluginInterface plugIn) {
+	public boolean PreProcess(SessionObject cruise, Services service) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 	@Override
-	public boolean PostProcess(SessionObject cruise, PluginInterface plugIn) {
+	public boolean PostProcess(SessionObject cruise, Services service) {
 		// TODO Auto-generated method stub
 		return true;
 	}

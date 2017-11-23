@@ -32,13 +32,13 @@ public class CruiseDatabase implements PluginInterface
     	pmd = new PlugInMetaData("CruiseDatabase","0.0.1","SJC","Database access plugin");
     	
     	pmd.getActions().add(new Action("info", "getPlugin Information"));
-    	pmd.getActions().get(0).getActionParams().add(new ActionParameter("Sample","false","unknown","Unused Parameter"));
+    	pmd.getActions().get(0).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
     	
     	pmd.getActions().add(new Action("CruiseTest", "Test API Call"));
-		pmd.getActions().get(1).getActionParams().add(new ActionParameter("Sample","false","unknown","Unused Parameter"));
+    	pmd.getActions().get(1).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
 		
     	pmd.getActions().add(new Action("PlugInInfo", "get information about the pluging"));
-    	pmd.getActions().get(2).getActionParams().add(new ActionParameter("Sample","false","unknown","Unused Parameter"));
+    	pmd.getActions().get(2).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
 
     	pmd.getActions().add(new Action("cDBCreatePool", "Create a new PooledConnection"));
 		pmd.getActions().get(3).getActionParams().add(new ActionParameter("service","true","CreatePoolService","This is a unique name for this call to make selecting and parsing results easier"));
@@ -74,7 +74,8 @@ public class CruiseDatabase implements PluginInterface
     	pmd.getActions().get(7).getActionParams().add(new ActionParameter("tableName","false","","Table name or list of tables names that make up the 'From' clause"));
 
     	pmd.getActions().add(new Action("echo", "Echos the request back as response."));
-    	pmd.getActions().get(8).getActionParams().add(new ActionParameter("Sample","false","EchoService","Unused Parameter"));
+    	pmd.getActions().get(8).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
+    	
 		//pmd.getActions().get(6).getActionParams().add(new ActionParameter("selectList","true","Duel","list of fields"));
 
 		/*
