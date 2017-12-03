@@ -598,7 +598,11 @@ public class QueryBuilder {
 									if(ts){
 										where.append(fn+"=("+timeStampFunctionName+"  ("+fvFinished+"))");
 									}else{
-										where.append(fn+"='"+fvFinished+"'");
+										if(!fvFinished.startsWith("'"))
+											fvFinished = "'"+fvFinished;
+										if(!fvFinished.endsWith("'"))
+											fvFinished = fvFinished+"'";
+										where.append(fn+"="+fvFinished+"");
 									}
 							}
 						}
@@ -661,7 +665,7 @@ public class QueryBuilder {
 
 	}
 	
-	private static String createInsert(SessionObject so, Services service) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception{
+	public static String createInsert(SessionObject so, Services service) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception{
 		//if(fwSess.isPerformanceMonitor()){
 		//	MsgLog.state(fwSess, "PERFORMANCE", "<tr><td align='right' width='30%'>"+Long.valueOf(System.currentTimeMillis()).toString()+":SqlDOManager CreateInsert Start");
 		//}
@@ -765,10 +769,10 @@ public class QueryBuilder {
 					String ty = qfv.get(f).getFieldType();
 					//String fvFinished = valueCleanup(fn,fv,ty);
 					if(!qfv.get(f).isExcludeFromWhere()){
-						if(fields.toString().length()>0)
-							fields.append(",");
-						fields.append(fn);
 						if(null != fv){
+							if(fields.toString().length()>0)
+								fields.append(",");
+							fields.append(fn);
 							if(values.toString().length()>0)
 								values.append(",\n");
 							
@@ -802,6 +806,12 @@ public class QueryBuilder {
 							}else if(fv.length()> 3000 && vendorName.contains("oracle") && (qfv.get(f).getFieldType().equalsIgnoreCase("clob") ||ty.equalsIgnoreCase("blob"))){
 								values.append(splitClob(fv.substring(1, fv.length()-1), 3000));
 							}else{
+								if(!fv.startsWith("'"))
+									fv = "'"+fv;
+								if(!fv.endsWith("'"))
+									fv = fv+"'";
+								
+								
 								values.append(fv);
 							}
 						}

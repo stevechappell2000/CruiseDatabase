@@ -63,20 +63,27 @@ public class CruiseDatabase implements PluginInterface
 		pmd.getActions().get(6).getActionParams().add(new ActionParameter("service","true","SelectService","This is a unique name for this call to make selecting and parsing results easier"));
 		pmd.getActions().get(6).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
 		pmd.getActions().get(6).getActionParams().add(new ActionParameter("selectList","false","","list of fields"));
+		pmd.getActions().get(6).getActionParams().add(new ActionParameter("includeQuery","false","","When true, the query executed is returned."));
+
 		pmd.getActions().get(6).getActionParams().add(new ActionParameter("orderBy","false","","Sort order CSV List of column names"));
 		pmd.getActions().get(6).getActionParams().add(new ActionParameter("distinct","false","","adds distinct key word to query"));
 		pmd.getActions().get(6).getActionParams().add(new ActionParameter("groupBy","false","","adds a group by"));
 		pmd.getActions().get(6).getActionParams().add(new ActionParameter("tableName","true","unknown","Name of the Connection pool. This name is used in subsequent calls."));
 
-    	pmd.getActions().add(new Action("update", "Queries a table"));
+    	pmd.getActions().add(new Action("update", "Updates a record based on supplied primary key."));
 		pmd.getActions().get(7).getActionParams().add(new ActionParameter("service","true","UpdateService","This is a unique name for this call to make selecting and parsing results easier"));
 		pmd.getActions().get(7).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
-    	pmd.getActions().get(7).getActionParams().add(new ActionParameter("tableName","false","","Table name or list of tables names that make up the 'From' clause"));
-
+    	pmd.getActions().get(7).getActionParams().add(new ActionParameter("tableName","true","","Table name or list of tables names that make up the 'From' clause"));
+    	pmd.getActions().get(7).getActionParams().add(new ActionParameter("includeQuery","false","","When true, the query executed is returned."));
+    	
     	pmd.getActions().add(new Action("echo", "Echos the request back as response."));
     	pmd.getActions().get(8).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
     	
-		//pmd.getActions().get(6).getActionParams().add(new ActionParameter("selectList","true","Duel","list of fields"));
+    	pmd.getActions().add(new Action("insert", "Inserts Record(s) into the specified table"));
+		pmd.getActions().get(9).getActionParams().add(new ActionParameter("service","true","UpdateService","This is a unique name for this call to make selecting and parsing results easier"));
+		pmd.getActions().get(9).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
+    	pmd.getActions().get(9).getActionParams().add(new ActionParameter("tableName","true","","Table name or list of tables names that make up the 'From' clause"));
+    	pmd.getActions().get(9).getActionParams().add(new ActionParameter("includeQuery","false","","When true, the query executed is returned."));
 
 		/*
 			String qOrder = service.Parameter("orderBy");
@@ -100,6 +107,7 @@ public class CruiseDatabase implements PluginInterface
 		case "cruisetest":
 			gro.addParmeter("PluginEnabled", "true");
 			so.appendToResponse(service.Service()+"."+service.Action(),gro);
+			ret = true;
 			break;
 		case "info":
 			if(null != pmd) {
@@ -122,6 +130,7 @@ public class CruiseDatabase implements PluginInterface
 				ret = cruConnection.createConnectionPool(so,service);
 				gro.addParmeter("PoolCreated", new Boolean(ret).toString());
 				so.appendToResponse(service.Service()+"."+service.Action(),gro);
+				ret = true;
 			}else {
 				gro.addParmeter("Pool Already exists", "Not added.");
 				so.appendToResponse(service.Service()+":"+service.Action(),gro);
@@ -224,6 +233,31 @@ public class CruiseDatabase implements PluginInterface
 				}
 			}
 			break;
+		case "insert":
+			try {
+				cruConn = cruConnection.getNewConnection(so, service);
+				if(null != cruConn) {
+					String query = QueryBuilder.createInsert(so, service);
+					if(null != service.Parameter("includeQuery") && service.Parameter("includeQuery").equalsIgnoreCase("true")) {
+						gro.addParmeter("Query", query);
+					}
+					so.appendToResponse(service.Service()+"."+service.Action()+"."+service.Parameter("poolName"),gro);
+					Integer updated = cruConn.getConn().prepareStatement(query).executeUpdate();
+					gro.addParmeter("InsertCount", updated.toString());
+					ret = true;
+				}else {
+					Clog.Error(so, "ser", "101.03", "executePlugin Failed to added connection to RequestState");
+				}
+			} catch (Exception e1) {
+				Clog.Error(so, "ser", "101.04", "executePlugin Failed:"+e1.getMessage());
+				e1.printStackTrace();
+			}finally {
+				if(null != cruConn) {
+					cruConn.Close();
+				}
+			}
+			break;
+		
 		default:
 			Clog.Error(so, "service", "100.05", "Invalid Action supplied:"+action);
 		}

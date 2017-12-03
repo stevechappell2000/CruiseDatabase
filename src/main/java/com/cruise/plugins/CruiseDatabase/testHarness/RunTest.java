@@ -2,12 +2,12 @@ package com.cruise.plugins.CruiseDatabase.testHarness;
 import com.corecruise.cruise.testharness.ValidateUser;
 import com.corecruise.cruise.SessionObject;
 import com.corecruise.cruise.SessionObjectJSON;
-import com.corecruise.cruise.services.interfaces.CruiseInterface;
+import com.corecruise.cruise.services.interfaces.PluginClientInterface;
 import com.corecruise.cruise.services.interfaces.PluginInterface;
 import com.corecruise.cruise.services.utils.Services;
 
 
-public class RunTest implements CruiseInterface {
+public class RunTest implements PluginClientInterface {
 	public RunTest() {
 		startApp();
 	}
