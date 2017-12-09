@@ -1,6 +1,7 @@
 package com.cruise.plugins.CruiseDatabase;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 
 import com.corecruise.cruise.SessionObject;
 import com.corecruise.cruise.logging.Clog;
@@ -32,13 +33,13 @@ public class CruiseDatabase implements PluginInterface
     	pmd = new PlugInMetaData("CruiseDatabase","0.0.1","SJC","Database access plugin");
     	
     	pmd.getActions().add(new Action("info", "getPlugin Information"));
-    	pmd.getActions().get(0).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
+    	pmd.getActions().get(0).getActionParams().add(new ActionParameter("service","true","~UUID","Internal Parameter to track service names. You can override"));
     	
     	pmd.getActions().add(new Action("CruiseTest", "Test API Call"));
-    	pmd.getActions().get(1).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
+    	pmd.getActions().get(1).getActionParams().add(new ActionParameter("service","true","~UUID","Internal Parameter to track service names. You can override"));
 		
     	pmd.getActions().add(new Action("PlugInInfo", "get information about the pluging"));
-    	pmd.getActions().get(2).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
+    	pmd.getActions().get(2).getActionParams().add(new ActionParameter("service","true","~UUID","Internal Parameter to track service names. You can override"));
 
     	pmd.getActions().add(new Action("cDBCreatePool", "Create a new PooledConnection"));
 		pmd.getActions().get(3).getActionParams().add(new ActionParameter("service","true","CreatePoolService","This is a unique name for this call to make selecting and parsing results easier"));
@@ -77,7 +78,7 @@ public class CruiseDatabase implements PluginInterface
     	pmd.getActions().get(7).getActionParams().add(new ActionParameter("includeQuery","false","","When true, the query executed is returned."));
     	
     	pmd.getActions().add(new Action("echo", "Echos the request back as response."));
-    	pmd.getActions().get(8).getActionParams().add(new ActionParameter("service","true","*UUID","Internal Parameter to track service names. You can override"));
+    	pmd.getActions().get(8).getActionParams().add(new ActionParameter("service","true","~UUID","Internal Parameter to track service names. You can override"));
     	
     	pmd.getActions().add(new Action("insert", "Inserts Record(s) into the specified table"));
 		pmd.getActions().get(9).getActionParams().add(new ActionParameter("service","true","UpdateService","This is a unique name for this call to make selecting and parsing results easier"));
@@ -192,6 +193,39 @@ public class CruiseDatabase implements PluginInterface
 							gro.addObjectParmeter("Results", resultMap);
 						}else {
 							gro.addParmeter("Results", "");
+						}
+					}else {
+						gro.addParmeter("Results", "");
+					}
+					ret = true;
+				}else {
+					Clog.Error(so, "ser", "100.03", "executePlugin Failed to added connection to RequestState");
+				}
+			} catch (Exception e1) {
+				Clog.Error(so, "ser", "100.04", "executePlugin Failed:"+e1.getMessage());
+				e1.printStackTrace();
+			}finally {
+				if(null != cruConn) {
+					cruConn.Close();
+				}
+			}
+			break;
+		case "foreach":
+			try {
+				cruConn = cruConnection.getNewConnection(so, service);
+				if(null != cruConn) {
+					String query = QueryBuilder.createSelect(so, service, false);
+					if(null != service.Parameter("includeQuery") && service.Parameter("includeQuery").equalsIgnoreCase("true")) {
+						gro.addParmeter("Query", query);
+					}
+					so.appendToResponse(service.Service()+"."+service.Action()+"."+service.Parameter("poolName"), gro);
+					ResultSet rs = cruConn.getConn().prepareStatement(query).executeQuery();
+					
+					if(null != rs) {
+						ResultSetMetaData rsm = rs.getMetaData();
+						int colCount = rsm.getColumnCount();
+						while(rs.next()) {
+							//for(rs.g)
 						}
 					}else {
 						gro.addParmeter("Results", "");

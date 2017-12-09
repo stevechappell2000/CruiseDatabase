@@ -100,10 +100,23 @@ public class cruConnection {
 		jdbcConfig.setJdbcUrl(service.ParameterValue("jdbcUrl").trim());
 		jdbcConfig.setDriverClassName(service.ParameterValue("DriverClassName").trim());
 		jdbcConfig.setUsername(service.ParameterValue("username"));
-		jdbcConfig.setPassword(service.ParameterValue("password"));*/
+		jdbcConfig.setPassword(service.ParameterValue("password"));
+		
+		*
+		*AWS Compatability:
+	      String dbName = System.getenv("RDS_DB_NAME");
+	      String userName = System.getenv("RDS_USERNAME");
+	      String password = System.getenv("RDS_PASSWORD");
+	      String hostname = System.getenv("RDS_HOSTNAME");
+	      String hostname = System.getenv("RDS_POOLNAME");
+	      String port = System.getenv("RDS_PORT");
+		*/
 
 		String poolName = service.ParameterValue("poolName");
 		if(null == poolName || poolName.trim().length()<1) {
+			if(null != System.getenv("RDS_POOLNAME")) {
+				poolName = System.getenv("RDS_POOLNAME");
+			}
 			Clog.Error(so, "service", "80001", "PoolName is required and was not supplied.");
 
 		}else {

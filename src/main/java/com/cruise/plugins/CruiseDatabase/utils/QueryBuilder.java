@@ -345,16 +345,19 @@ public class QueryBuilder {
 					String ty = qfv.get(f).getFieldType();
 					String fvFinished = valueCleanup(fn,fv,ty);
 					boolean ts = false;
+					if(null != fv && fv.trim().equalsIgnoreCase("null")) {
+						fv = null;
+					}
 					if(ty.equalsIgnoreCase("TIMESTAMP") || ty.equalsIgnoreCase("DATE")){
 						ts = true;
-						if(null == fv){
+						/*if(null == fv){
 							if(fn.contains(".")){
 								fv = service.Parameter(fn).split("\\.")[1];
 								if(null == fv || fv.trim().length()<1){
 									fv = null;
 								}
 							}
-						}
+						}*/
 					}
 					//if(DoNotExecuteQueries == false && (ty.equalsIgnoreCase("CLOB") || ty.equalsIgnoreCase("BLOB"))){
 					//	fv = null;
