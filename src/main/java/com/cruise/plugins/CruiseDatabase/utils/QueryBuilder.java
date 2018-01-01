@@ -845,7 +845,7 @@ public class QueryBuilder {
 		}
 
 	}
-	private static String createDelete(SessionObject so, Services service) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception{
+	public static String createDelete(SessionObject so, Services service) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception{
 		//if(fwSess.isPerformanceMonitor()){
 		//	MsgLog.state(fwSess, "PERFORMANCE", "<tr><td align='right' width='30%'>"+Long.valueOf(System.currentTimeMillis()).toString()+":SqlDOManager CreateInsert Start");
 		//}
@@ -948,22 +948,20 @@ public class QueryBuilder {
 					String fv = qfv.get(f).getFieldValue();
 					String fn = qfv.get(f).getFieldName();
 					String ty = qfv.get(f).getFieldType();
-					//String fvFinished = valueCleanup(fn,fv,ty);
+                    if(null != fv) {
+						if(!fv.startsWith("'"))
+							fv = "'"+fv;
+						if(!fv.endsWith("'"))
+							fv = fv+"'";
+                    }
+					
+					
 					if(!qfv.get(f).isExcludeFromWhere()){
-						if(fields.toString().length()>0)
-							fields.append(",");
-
-						if(null != fv){
-							if(values.toString().length()>0)
-								values.append(",");
-							values.append(fn + "=" + fv);
+						if((null != fv)){
+							if(where.toString().length()>0)
+								where.append(" and ");
+							where.append(fn+"="+fv);
 						}
-					}else if((null != fv)){
-						//if(!qfv.get(f).isWhereOnly()){
-						if(where.toString().length()>0)
-							where.append(" and ");
-						where.append(fn+"="+fv);
-						//}
 					}
 
 
@@ -977,10 +975,12 @@ public class QueryBuilder {
 				sbQ.append(" "+tables+" ");
 			}
 
-			if(where.length()>0)
+			if(where.length()>0) {
 				sbQ.append(" where "+where.toString());
-			else
+			}else {
 				Clog.Error(so, "service", "900001", "Problem with Delete, no qualifying where clause:"+sbQ.toString());
+				sbQ = new StringBuffer();
+			}
 			
 			
 			return sbQ.toString();

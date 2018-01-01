@@ -125,14 +125,25 @@ public class cruConnection {
 			}
 
 			Properties p = new Properties();
-			for (Entry<String, String> entry : service.getParameters().entrySet()) {
+			/*for (Entry<String, String> entry : service.getParameters().entrySet()) {
 				//Shouldn't hurt anything, but removing service and action just in case.
 				if(entry.getKey().equalsIgnoreCase("preprocessservice")||entry.getKey().equalsIgnoreCase("postprocessservice")||entry.getKey().equalsIgnoreCase("processservice")||entry.getKey().equalsIgnoreCase("execute")||entry.getKey().equalsIgnoreCase("service")||entry.getKey().equalsIgnoreCase("ID")||entry.getKey().equalsIgnoreCase("action")||entry.getKey().equalsIgnoreCase("pluginName")) {
 
 				}else {
 					p.setProperty(entry.getKey(), entry.getValue());
 				}
+			}*/
+			
+			for (Entry<String, String> entry : service.getParameters().entrySet()) {
+				String key = entry.getKey();
+				if(key.startsWith("config_")) {
+					if(p.containsKey(key.replace("config_", ""))) {
+						p.remove(key.replace("config_", ""));
+					}
+					p.put(key.replace("config_", ""), entry.getValue());
+				}
 			}
+			
 			poolName = poolName.trim().toUpperCase();
 			try {
 				if(!cruConnections.containsKey(poolName)) {
