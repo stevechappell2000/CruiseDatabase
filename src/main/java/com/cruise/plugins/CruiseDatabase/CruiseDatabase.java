@@ -1,10 +1,10 @@
 package com.cruise.plugins.CruiseDatabase;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.util.Properties;
 
+import com.corecruise.core.CoreCruise;
 import com.corecruise.cruise.SessionObject;
+import com.corecruise.cruise.config.CruisePluginEnvironment;
 import com.corecruise.cruise.logging.Clog;
 import com.corecruise.cruise.services.interfaces.PluginInterface;
 import com.corecruise.cruise.services.utils.Services;
@@ -30,8 +30,14 @@ public class CruiseDatabase implements PluginInterface
 
 
 	PlugInMetaData pmd = null;
-    public CruiseDatabase() {
-    	pmd = new PlugInMetaData("CruiseDatabase","0.0.1","SJC","Database access plugin");
+	CruisePluginEnvironment config = null;
+	String pluginName = "CruiseDatabase";
+	
+	public CruiseDatabase() {
+		if(null == config)
+			config = CoreCruise.getCruiseConfig(pluginName);
+		
+    	pmd = new PlugInMetaData(pluginName,"0.0.1","SJC","Database access plugin");
   	
 	    int x = 0;
     	pmd.getActions().add(new Action("PlugInInfo", "get information about the pluging"));
@@ -67,12 +73,13 @@ public class CruiseDatabase implements PluginInterface
     	pmd.getActions().add(new Action("select", "Queries a table and returns a JSON array of records.\nSerializes a com.fasterxml.jackson.databind.node.ArrayNode  object into the SessionObject ResponseObject (see SessionObject.getRepsone())"));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("service","true","SelectService","This is a unique name for this call to make selecting and parsing results easier"));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
+		pmd.getActions().get(x).getActionParams().add(new ActionParameter("tableName","true","unknown","Name of the Connection pool. This name is used in subsequent calls."));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("selectList","false","","list of fields"));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("includeQuery","false","","When true, the query executed is returned."));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("orderBy","false","","Sort order CSV List of column names"));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("distinct","false","","adds distinct key word to query"));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("groupBy","false","","adds a group by"));
-		pmd.getActions().get(x).getActionParams().add(new ActionParameter("tableName","true","unknown","Name of the Connection pool. This name is used in subsequent calls."));
+		pmd.getActions().get(x).getActionParams().add(new ActionParameter("holdResults","false","false","When set to true, the resultset is stored in the SessionObject and results are not sent to the client."));
 
 		/*++x;
     	pmd.getActions().add(new Action("forEach", "Updates a record based on supplied primary key."));
@@ -199,17 +206,21 @@ public class CruiseDatabase implements PluginInterface
 					if(null != query && query.length()>0) {
 						so.appendToResponse(service.Service()+"."+service.Action()+"."+service.Parameter("poolName"), gro);
 						ResultSet rs = cruConn.getConn().prepareStatement(query).executeQuery();
-						
-						if(null != rs) {
-							ArrayNode resultMap= JsonNodeRowMapper.mapRows(so, rs);
-							
-							if(null != resultMap) {
-								gro.addObjectParmeter("Results", resultMap);
+						if(null != service.Parameter("holdResults") && service.Parameter("holdResults").equalsIgnoreCase("true")){
+						  so.setRequestState(service.Service()+"."+service.Action()+".resultSet", rs);
+						  gro.addObjectParmeter("Results", "Stored in SessionObject.RequestState as "+service.Service()+"."+service.Action()+".resultSet");
+						}else {
+							if(null != rs) {
+								ArrayNode resultMap= JsonNodeRowMapper.mapRows(so, rs);
+								
+								if(null != resultMap) {
+									gro.addObjectParmeter("Results", resultMap);
+								}else {
+									gro.addParmeter("Results", "");
+								}
 							}else {
 								gro.addParmeter("Results", "");
 							}
-						}else {
-							gro.addParmeter("Results", "");
 						}
 						ret = true;
 					}
@@ -356,6 +367,18 @@ public class CruiseDatabase implements PluginInterface
 	public void setPluginVendor(PlugInMetaData PMD) {
 		pmd = PMD;
 		
+	}
+
+	@Override
+	public void byPass(SessionObject sessionObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean initPlugin() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
