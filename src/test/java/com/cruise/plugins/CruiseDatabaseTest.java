@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase;
+package com.cruise.plugins;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

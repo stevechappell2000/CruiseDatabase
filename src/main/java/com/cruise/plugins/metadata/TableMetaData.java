@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.metadata;
+package com.cruise.plugins.metadata;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

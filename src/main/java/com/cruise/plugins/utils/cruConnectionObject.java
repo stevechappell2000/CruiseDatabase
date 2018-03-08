@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.utils;
+package com.cruise.plugins.utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

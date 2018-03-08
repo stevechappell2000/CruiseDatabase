@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.metadata;
+package com.cruise.plugins.metadata;
 
 import java.util.ArrayList;
 import java.util.HashMap;

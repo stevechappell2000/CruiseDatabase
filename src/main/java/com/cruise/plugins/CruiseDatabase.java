@@ -1,6 +1,8 @@
-package com.cruise.plugins.CruiseDatabase;
+package com.cruise.plugins;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Set;
 
 import com.corecruise.core.CoreCruise;
 import com.corecruise.cruise.SessionObject;
@@ -9,15 +11,18 @@ import com.corecruise.cruise.logging.Clog;
 import com.corecruise.cruise.services.interfaces.PluginInterface;
 import com.corecruise.cruise.services.utils.Services;
 import com.corecruise.cruise.services.utils.GenericSessionResp;
+import com.cruise.forms.creator.Components;
+import com.cruise.forms.creator.Form;
 import com.cruise.plugins.Action;
 import com.cruise.plugins.ActionParameter;
 import com.cruise.plugins.PlugInMetaData;
-import com.cruise.plugins.CruiseDatabase.metadata.DBMetaData;
-import com.cruise.plugins.CruiseDatabase.metadata.TableMetaData;
-import com.cruise.plugins.CruiseDatabase.utils.JsonNodeRowMapper;
-import com.cruise.plugins.CruiseDatabase.utils.QueryBuilder;
-import com.cruise.plugins.CruiseDatabase.utils.cruConnection;
-import com.cruise.plugins.CruiseDatabase.utils.cruConnectionObject;
+import com.cruise.plugins.metadata.ColumnMetaData;
+import com.cruise.plugins.metadata.DBMetaData;
+import com.cruise.plugins.metadata.TableMetaData;
+import com.cruise.plugins.utils.JsonNodeRowMapper;
+import com.cruise.plugins.utils.QueryBuilder;
+import com.cruise.plugins.utils.cruConnection;
+import com.cruise.plugins.utils.cruConnectionObject;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 
@@ -70,6 +75,13 @@ public class CruiseDatabase implements PluginInterface
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("tableName","true","unknown","Name of the Connection pool. This name is used in subsequent calls."));
 
 		++x;
+    	pmd.getActions().add(new Action("cDBGetTableForm", "Returns a FormIO JSON Representation of a form."));
+		pmd.getActions().get(x).getActionParams().add(new ActionParameter("service","true","GetTableInfoService","This is a unique name for this call to make selecting and parsing results easier"));
+		pmd.getActions().get(x).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
+		pmd.getActions().get(x).getActionParams().add(new ActionParameter("tableName","true","unknown","Name of the Connection pool. This name is used in subsequent calls."));
+
+		
+		++x;
     	pmd.getActions().add(new Action("select", "Queries a table and returns a JSON array of records.\nSerializes a com.fasterxml.jackson.databind.node.ArrayNode  object into the SessionObject ResponseObject (see SessionObject.getRepsone())"));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("service","true","SelectService","This is a unique name for this call to make selecting and parsing results easier"));
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
@@ -109,6 +121,11 @@ public class CruiseDatabase implements PluginInterface
 		pmd.getActions().get(x).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
     	pmd.getActions().get(x).getActionParams().add(new ActionParameter("tableName","true","","Table name or list of tables names that make up the 'From' clause"));
     	pmd.getActions().get(x).getActionParams().add(new ActionParameter("includeQuery","false","","When true, the query executed is returned."));
+
+		++x;
+    	pmd.getActions().add(new Action("getConnection", "Establishes/Creates a connection object. This object is then stored in the SessionObject RequestState object by the 'servicePoolName'.'PoolName' e.g. 'getDataBaseConnection.MyPool'"));
+		pmd.getActions().get(x).getActionParams().add(new ActionParameter("service","true","getDataBaseConnection","This is a unique name for this call to make selecting and parsing results easier"));
+		pmd.getActions().get(x).getActionParams().add(new ActionParameter("poolName","true","MyPool","Name of the Connection pool. This name is used in subsequent calls."));
 
 		/*
 			String qOrder = service.Parameter("orderBy");
@@ -176,12 +193,62 @@ public class CruiseDatabase implements PluginInterface
 				Clog.Error(so, "GetTableInfo", "100004", "Failed to get any information about the pool");
 			}
 			break;
-		case "cdbgetconnection":
+		case "cdbgettableform":
+			dbmd = cruConnection.getPoolMetaData(so, service);
+			Form form = new Form();
+			form.setCreated(form.currentDataAsString());
+			form.setModified(form.currentDataAsString());
+			if(dbmd.getTables().containsKey(service.Parameter("tableName"))) {
+				TableMetaData tmd = dbmd.getTables().get(service.Parameter("tableName"));
+				form.setTitle("UI For "+tmd.getTableName());
+				HashMap<String, ColumnMetaData> x = tmd.getColumns();
+				Set<String> keys = x.keySet();
+				ColumnMetaData col;
+				Components comp;
+				/*
+                            "persistent":true,
+                            "unique":false,
+                            "defaultValue":"",
+                            "multiple":false,
+                            "suffix":"",
+                            "prefix":"",
+                            "placeholder":"xxxxxxxxxxxxEnter your first name",
+                            "key":"firstName",
+                            "label":"xxxxFirst Name",
+                            "inputMask":"",
+                            "inputType":"text",
+                            "tableView":true,
+                            "input":true,
+                            "type":"textfield",
+                            "lockKey":false,
+				 */
+				for(String key: keys) {
+					col = x.get(key);
+					comp = new Components();
+					comp.setType("textfield");
+					comp.setMultiple(false);
+					comp.setTableView(false);
+					comp.setInput(true);
+					comp.setLockKey(false);
+					comp.setLabel(col.getColumnInfo().get("COLUMN_NAME"));
+					comp.setKey(col.getColumnInfo().get("COLUMN_NAME"));
+					comp.getValidate().setMaxLength(col.getColumnInfo().get("COLUMN_SIZE"));
+					//comp.setPlaceholder(col.getColumnInfo().get("default"));
+					//comp.setDefaultValue(col.getColumnInfo().get("default"));
+					form.getComponents().add(comp);
+				}
+				so.appendToResponse(service.Service()+"."+service.Action()+"."+service.Parameter("tableName"), form);
+				ret = true;
+			}else {
+				Clog.Error(so, "GetTableInfo", "100004", "Failed to get any information about the pool");
+			}
+			break;
+		case "getconnection":
 			
 			try {
 				cruConn = cruConnection.getNewConnection(so, service);
 				if(null != cruConn) {
-					so.setRequestState(service.Service()+"."+service.Action()+"."+service.Parameter("poolName"), cruConn);
+					so.setRequestState(service.Service()+"."+service.Parameter("poolName"), cruConn);
 					ret = true;
 				}else {
 					Clog.Error(so, "ser", "100005", "executePlugin Failed to added connection to RequestState");
@@ -191,7 +258,7 @@ public class CruiseDatabase implements PluginInterface
 				e1.printStackTrace();
 			}finally {
 				if(null != cruConn) {
-					cruConn.Close();
+					//cruConn.Close();
 				}
 			}
 			break;
@@ -204,7 +271,6 @@ public class CruiseDatabase implements PluginInterface
 						gro.addParmeter("Query", query);
 					}
 					if(null != query && query.length()>0) {
-						so.appendToResponse(service.Service()+"."+service.Action()+"."+service.Parameter("poolName"), gro);
 						ResultSet rs = cruConn.getConn().prepareStatement(query).executeQuery();
 						if(null != service.Parameter("holdResults") && service.Parameter("holdResults").equalsIgnoreCase("true")){
 						  so.setRequestState(service.Service()+"."+service.Action()+".resultSet", rs);
@@ -223,6 +289,7 @@ public class CruiseDatabase implements PluginInterface
 							}
 						}
 						ret = true;
+						so.appendToResponse(service.Service()+"."+service.Action()+"."+service.Parameter("poolName"), gro);
 					}
 				}else {
 					Clog.Error(so, "ser", "100007", "executePlugin Failed to added connection to RequestState");

@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.utils;
+package com.cruise.plugins.utils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -10,8 +10,8 @@ import java.util.Properties;
 import com.corecruise.cruise.SessionObject;
 import com.corecruise.cruise.logging.Clog;
 import com.corecruise.cruise.services.utils.Services;
-import com.cruise.plugins.CruiseDatabase.metadata.DBMetaData;
-import com.cruise.plugins.CruiseDatabase.metadata.MDLoader;
+import com.cruise.plugins.metadata.DBMetaData;
+import com.cruise.plugins.metadata.MDLoader;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -125,15 +125,6 @@ public class cruConnection {
 			}
 
 			Properties p = new Properties();
-			/*for (Entry<String, String> entry : service.getParameters().entrySet()) {
-				//Shouldn't hurt anything, but removing service and action just in case.
-				if(entry.getKey().equalsIgnoreCase("preprocessservice")||entry.getKey().equalsIgnoreCase("postprocessservice")||entry.getKey().equalsIgnoreCase("processservice")||entry.getKey().equalsIgnoreCase("execute")||entry.getKey().equalsIgnoreCase("service")||entry.getKey().equalsIgnoreCase("ID")||entry.getKey().equalsIgnoreCase("action")||entry.getKey().equalsIgnoreCase("pluginName")) {
-
-				}else {
-					p.setProperty(entry.getKey(), entry.getValue());
-				}
-			}*/
-			
 			for (Entry<String, String> entry : service.getParameters().entrySet()) {
 				String key = entry.getKey();
 				if(key.startsWith("config_")) {

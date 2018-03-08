@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.testHarness;
+package com.cruise.plugins.testHarness;
 import com.corecruise.cruise.testharness.ValidateUser;
 import com.corecruise.cruise.SessionObject;
 import com.corecruise.cruise.SessionObjectJSON;

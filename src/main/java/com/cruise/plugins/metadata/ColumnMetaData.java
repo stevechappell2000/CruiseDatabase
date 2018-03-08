@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.metadata;
+package com.cruise.plugins.metadata;
 
 import java.util.HashMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;

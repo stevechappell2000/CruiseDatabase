@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.testHarness;
+package com.cruise.plugins.testHarness;
 
 import java.util.HashMap;
 

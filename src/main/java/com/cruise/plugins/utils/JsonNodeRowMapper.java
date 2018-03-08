@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.utils;
+package com.cruise.plugins.utils;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;

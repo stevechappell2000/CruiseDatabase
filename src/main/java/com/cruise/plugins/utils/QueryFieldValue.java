@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.utils;
+package com.cruise.plugins.utils;
 
 public class QueryFieldValue{
 	String FieldName;

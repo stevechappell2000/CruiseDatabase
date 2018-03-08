@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.testHarness;
+package com.cruise.plugins.testHarness;
 
 public class Testharness  {
 	

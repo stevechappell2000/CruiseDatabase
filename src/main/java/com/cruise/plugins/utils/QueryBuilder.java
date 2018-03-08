@@ -1,4 +1,4 @@
-package com.cruise.plugins.CruiseDatabase.utils;
+package com.cruise.plugins.utils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -14,9 +14,9 @@ import java.util.StringTokenizer;
 import com.corecruise.cruise.SessionObject;
 import com.corecruise.cruise.logging.Clog;
 import com.corecruise.cruise.services.utils.Services;
-import com.cruise.plugins.CruiseDatabase.metadata.ColumnMetaData;
-import com.cruise.plugins.CruiseDatabase.metadata.DBMetaData;
-import com.cruise.plugins.CruiseDatabase.metadata.TableMetaData;
+import com.cruise.plugins.metadata.ColumnMetaData;
+import com.cruise.plugins.metadata.DBMetaData;
+import com.cruise.plugins.metadata.TableMetaData;
 
 public class QueryBuilder {
 	private static String dataFormat = "yyyy-mm-dd hh24:mi:ss.FF";
